@@ -9,19 +9,22 @@ class App extends Component {
       {name: 'Manu', age: 29},
       {name: 'Stephanie', age: 26},
     ],
-    otherState: 'some other value'
+    otherState: 'some other value',
+    showPersons: false,
   };
 
   switchNameHandler = (newName) => {
-    // console.log('Was clicked');
-    // DON'T DO THIS: this.state.persons[0].name = 'Maximilian';
+    // DON'T DO
+    // this.state.persons[0].name = 'Maximilian';
+
+    // DO
     this.setState({
       persons: [
         {name: newName, age: 28},
         {name: 'Manu', age: 29},
         {name: 'Stephanie', age: 27},
       ]
-    })
+    });
   }
 
   nameChangedHandler = (event) => {
@@ -32,6 +35,11 @@ class App extends Component {
         {name: 'Stephanie', age: 26},
       ]
     })
+  }
+
+  togglePersonsHandler = () => {
+    const doesShow = this.state.showPersons;
+    this.setState({showPersons: !doesShow});
   }
 
   render() {
@@ -49,18 +57,24 @@ class App extends Component {
         <p>This is really working!</p>
         <button 
           style={style}
-          onClick={() => this.switchNameHandler('Maximilian!!')}>Switch Name</button>
-        <Person 
-          name={this.state.persons[0].name} 
-          age={this.state.persons[0].age}/>
-        <Person 
-          name={this.state.persons[1].name} 
-          age={this.state.persons[1].age}
-          click={this.switchNameHandler.bind(this, 'Max!')}
-          changed={this.nameChangedHandler}>My Hobbies: Racing</Person>
-        <Person 
-          name={this.state.persons[2].name} 
-          age={this.state.persons[2].age}/>
+          onClick={this.togglePersonsHandler}>Toggle Persons</button>
+        
+        { 
+          this.state.showPersons ? 
+            <div>
+              <Person 
+                name={this.state.persons[0].name} 
+                age={this.state.persons[0].age}/>
+              <Person 
+                name={this.state.persons[1].name} 
+                age={this.state.persons[1].age}
+                click={this.switchNameHandler.bind(this, 'Max!')}
+                changed={this.nameChangedHandler}>My Hobbies: Racing</Person>
+              <Person 
+                name={this.state.persons[2].name} 
+                age={this.state.persons[2].age}/>
+            </div> : null
+        }
       </div>
     );
 
