@@ -1,17 +1,59 @@
-import React from 'react';
-import Person from './Person/Person';
+import React, { Component } from "react";
+import Person from "./Person/Person";
 
-const persons = (props) => {
-    console.log('[Persons.js] rendering...');
-    
-    return props.persons.map((person, index) => {
-        return <Person      
-                key={person.id}                   
-                click={() => props.clicked(index)}
-                name={person.name} 
-                age={person.age}
-                changed={(event) => props.changed(event, person.id)}/>
-    })
-};
+class Persons extends Component {
+  // 1) Lifecycle - Update
+  // DO: Sync state to props
+  // DON'T: cause side-effects
+  // static getDerivedStateFromProps(props, state) {
+  //   console.log("[Persons.js] getDerivedStateFromProps");
+  //   return state;
+  // }
 
-export default persons;
+  // 2) Lifecycle - Update (/!\ Important One /!\)
+  // DO: decide whether to continue or not
+  // DON'T: cause side-effects
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("[Persons.js] shouldComponentUpdate");
+
+    return true;
+  }
+
+  // 4) Lifecycle - Update
+  // DO: last-minute DOM ops
+  // DON'T: cause side-effects
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log("[Persons.js] getSnapshotBeforeUpdate");
+
+    return { mesage: "Snapshot" };
+  }
+
+  // 5) Lifecycle - Update (/!\ Important One /!\)
+  // DO: cause side-effects
+  // DON'T: update state (triggers re-render)
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("[Persons.js] componentDidUpdate");
+    console.log(snapshot);
+  }
+
+  // 3) Lifecycle - Update
+  // (trigger lifecycle for child components then)
+  // DO: prepare & structure your JSX code
+  render() {
+    console.log("[Persons.js] rendering...");
+
+    return this.props.persons.map((person, index) => {
+      return (
+        <Person
+          key={person.id}
+          click={() => this.props.clicked(index)}
+          name={person.name}
+          age={person.age}
+          changed={event => this.props.changed(event, person.id)}
+        />
+      );
+    });
+  }
+}
+
+export default Persons;
