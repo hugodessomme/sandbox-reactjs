@@ -36,6 +36,10 @@ class Persons extends Component {
     console.log(snapshot);
   }
 
+  componentWillUnmount() {
+    console.log("[Persons.js] componentWillUnmount");
+  }
+
   // 3) Lifecycle - Update
   // (trigger lifecycle for child components then)
   // DO: prepare & structure your JSX code
