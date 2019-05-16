@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import Person from "./Person/Person";
 
-class Persons extends Component {
+class Persons extends PureComponent {
   // 1) Lifecycle - Update
   // DO: Sync state to props
   // DON'T: cause side-effects
@@ -13,11 +13,17 @@ class Persons extends Component {
   // 2) Lifecycle - Update (/!\ Important One /!\)
   // DO: decide whether to continue or not
   // DON'T: cause side-effects
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("[Persons.js] shouldComponentUpdate");
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log("[Persons.js] shouldComponentUpdate");
 
-    return true;
-  }
+  //   if (nextProps.persons !== this.props.persons || 
+  //       nextProps.clicked !== this.props.clicked || 
+  //       nextProps.changed !== this.props.changed) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   // 4) Lifecycle - Update
   // DO: last-minute DOM ops
