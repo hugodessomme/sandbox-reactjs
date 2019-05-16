@@ -1,9 +1,9 @@
 import React from "react";
 
-const withClass = (WrapperComponent, className) => {
+const withClass = (WrappedComponent, className) => {
   return props => (
     <div className={className}>
-      <WrapperComponent />
+      <WrappedComponent { ...props } />
     </div>
   );
 };
