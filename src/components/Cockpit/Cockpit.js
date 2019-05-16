@@ -1,9 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import AuthContext from "../../context/auth-context";
 import styles from "./Cockpit.module.css";
 
 const cockpit = props => {
   const toggleBtnRef = useRef(null);
+  const authContext = useContext(AuthContext);
+
+  console.log(authContext.authenticated);
 
   // Last argument means this code will be triggered
   // only if this data is updated
@@ -57,9 +60,7 @@ const cockpit = props => {
       <button ref={toggleBtnRef} className={btnClass} onClick={props.clicked}>
         Switch Name
       </button>
-      <AuthContext.Consumer>
-        {context => <button onClick={context.login}>Log In</button>}
-      </AuthContext.Consumer>
+      <button onClick={authContext.login}>Log In</button>
     </div>
   );
 };
