@@ -1,19 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "./Cockpit.module.css";
 
 const cockpit = props => {
+  const toggleBtnRef = useRef(null);
+
   // Last argument means this code will be triggered
   // only if this data is updated
   // /!\ We can use several userEffect function for each data
   useEffect(() => {
     console.log("[Cockpit.js] useEffect");
     // HTTP requests...
-    const timer = setTimeout(() => {
-      alert("Saved data to cloud!");
-    }, 1000);
+    // const timer = setTimeout(() => {
+    //   alert("Saved data to cloud!");
+    // }, 1000);
 
+    toggleBtnRef.current.click();
+    
     return () => {
-      clearTimeout(timer);
+      // clearTimeout(timer);
       console.log("[Cockpit.js] cleanup work in useEffect");
     };
   }, []); // If empty array is passed,
@@ -49,7 +53,7 @@ const cockpit = props => {
     <div className={styles.Cockpit}>
       <h1>{props.title}</h1>
       <p className={classes.join(" ")}>This is really working!</p>
-      <button className={btnClass} onClick={props.clicked}>
+      <button ref={toggleBtnRef} className={btnClass} onClick={props.clicked}>
         Switch Name
       </button>
     </div>
