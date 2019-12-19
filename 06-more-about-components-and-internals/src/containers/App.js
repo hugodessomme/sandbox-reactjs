@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import './App.css';
+import css from './App.module.css';
 import Cockpit from '../components/Cockpit/Cockpit';
 import Persons from '../components/Persons/Persons';
+import withClass from '../hoc/withClass';
+import Auxiliary from '../hoc/Auxiliary';
+import AuthContext from '../context/auth-context';
 
 class App extends Component {
   state = {
@@ -11,7 +14,10 @@ class App extends Component {
       { id: 3, name: 'Leo', age: 54 }
     ],
     bird: 'baby',
-    showPersons: false
+    showPersons: false,
+    showCockpit: true,
+    counter: 0,
+    authenticated: false
   };
 
   deletePersonHandler = (index) => {
@@ -41,8 +47,17 @@ class App extends Component {
     const persons = [...this.state.persons];
     persons[personIndex] = person;
 
+    this.setState((prevState, props) => {
+      return {
+        persons: persons,
+        counter: prevState.counter + 1
+      }
+    });
+  }
+
+  loginHandler = () => {
     this.setState({
-      persons: persons
+      authenticated: true
     });
   }
 
@@ -54,19 +69,31 @@ class App extends Component {
         <Persons 
           persons={this.state.persons} 
           clicked={this.deletePersonHandler}
-          changed={this.nameChangedHandler} /> 
+          changed={this.nameChangedHandler} 
+          isAuthenticated={this.state.authenticated} /> 
       );
     }
 
     return (
-      <div className="App">
-        <Cockpit 
-          persons={this.state.persons} 
-          showPersons={this.state.showPersons} 
-          clicked={this.togglePersonsHandler} />
-        
-        {persons}
-      </div>
+      <Auxiliary>
+        <h1>{this.state.counter}</h1>
+        <button onClick={() => this.setState({ showCockpit: false })}>Remove Cockpit</button>
+
+        <AuthContext.Provider 
+          value={{
+            authenticated: this.state.authenticated, 
+            login: this.loginHandler 
+          }}
+        >
+          {this.state.showCockpit ? <Cockpit 
+            personsLength={this.state.persons.length} 
+            showPersons={this.state.showPersons} 
+            clicked={this.togglePersonsHandler} 
+            login={this.loginHandler} /> : null}
+          
+          {persons}
+        </AuthContext.Provider>
+      </Auxiliary>
     );
   
     // No JSX? Here is how to do the same than above...
@@ -74,4 +101,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withClass(App, css.App);

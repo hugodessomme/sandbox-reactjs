@@ -1,29 +1,47 @@
-import React from 'react'; 
-import styled from 'styled-components';
-import classes from './Person.module.css';
+import React, { Component } from 'react'; 
+import PropTypes from 'prop-types';
+import css from './Person.module.css';
+import Auxiliary from '../../../hoc/Auxiliary';
+import withClass from '../../../hoc/withClass';
+import AuthContext from '../../../context/auth-context';
 
-const StyledDiv = styled.div`
-  width: 60%;
-  margin: 10px auto;
-  padding: 10px;
-  border: 1px solid blue;
-  box-shadow: 0 2px 3px #ccc;
-  text-align: center;
-
-  @media (min-width: 500px) {
-    width: 450px;
+class Person extends Component {
+  constructor(props) {
+    super(props);
+    this.inputElementRef = React.createRef();
   }
-`;
 
-const person = (props) => { 
-  return (
-    <StyledDiv>
-      <p className={classes.test} onClick={props.click}>I'm {props.name} and I'm {props.age} years old!</p>
-      <p>{props.children}</p>
-      <input type="text" onChange={props.changed} value={props.name} />
-    </StyledDiv>
-  );
+  static contextType = AuthContext;
+
+  componentDidMount() {
+    this.inputElementRef.current.focus();
+    console.log(this.context.authenticated)
+  }
+
+  render() {
+    return (
+      <Auxiliary>
+          {this.context.authenticated ? <p>Authenticated</p> : <p>Please log in</p>}
+        
+        <p className={css.test} onClick={this.props.click}>I'm {this.props.name} and I'm {this.props.age} years old!</p>
+        <p>{this.props.children}</p>
+        <input 
+          type="text" 
+          // ref={(inputEl) => this.inputElement = inputEl}
+          ref={this.inputElementRef}
+          onChange={this.props.changed} 
+          value={this.props.name} />
+      </Auxiliary>
+    );
+  }
 }
 
-export default person;
+Person.propTypes = {
+  click: PropTypes.func,
+  name: PropTypes.string,
+  age: PropTypes.number,
+  changed: PropTypes.func
+};
+
+export default withClass(Person, css.Person);
 
