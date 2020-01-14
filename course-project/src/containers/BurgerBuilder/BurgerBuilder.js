@@ -70,7 +70,7 @@ class BurgerBuilder extends Component {
     removeIngredientHandler = type => {
          // Update ingredients
          const oldCount = this.state.ingredients[type];
-         
+
          if (oldCount <= 0) {
              return;
          }
@@ -80,12 +80,12 @@ class BurgerBuilder extends Component {
              ...this.state.ingredients
          };
          updatedIngredients[type] = updatedCount;
- 
+
          // Update total price
          const priceDeduction = INGREDIENT_PRICES[type];
          const oldPrice = this.state.totalPrice;
          const newPrice = oldPrice - priceDeduction;
- 
+
          this.setState({
              ingredients: updatedIngredients,
              totalPrice: newPrice
@@ -100,30 +100,42 @@ class BurgerBuilder extends Component {
     purchaseCancelHandler = () => {
         this.setState({ purchasing: false });
     }
-    
+
     purchaseContinueHandler = () => {
         // alert('You continue!');
-        this.setState({ loading: true });
 
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Hugo Dessomme',
-                address: {
-                    street: 'Test Street',
-                    zipCode: '43000',
-                    country: 'France'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
-        };
+        // this.setState({ loading: true });
 
-        axios
-            .post('/orders.json', order)
-            .then(response => this.setState({ loading: false, purchasing: false }))
-            .catch(error => this.setState({ loading: false, purchasing: false }));
+        // const order = {
+        //     ingredients: this.state.ingredients,
+        //     price: this.state.totalPrice,
+        //     customer: {
+        //         name: 'Hugo Dessomme',
+        //         address: {
+        //             street: 'Test Street',
+        //             zipCode: '43000',
+        //             country: 'France'
+        //         },
+        //         email: 'test@test.com'
+        //     },
+        //     deliveryMethod: 'fastest'
+        // };
+
+        // axios
+        //     .post('/orders.json', order)
+        //     .then(response => this.setState({ loading: false, purchasing: false }))
+        //     .catch(error => this.setState({ loading: false, purchasing: false }));
+
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]))
+        }
+        const queryString = queryParams.join('&');
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render() {
@@ -134,7 +146,7 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0;
         }
 
-        // 1. Before fetching data, orderSummary is not defined 
+        // 1. Before fetching data, orderSummary is not defined
         // 1. Before fetching data, burger displays a spinner
         let orderSummary = null;
         let burger = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />;
@@ -143,28 +155,28 @@ class BurgerBuilder extends Component {
         // 2. When ingredients are fetched, we define burger
         if (this.state.ingredients) {
             orderSummary = (
-                <OrderSummary 
+                <OrderSummary
                     price={this.state.totalPrice}
-                    ingredients={this.state.ingredients} 
+                    ingredients={this.state.ingredients}
                     purchaseCanceled={this.purchaseCancelHandler}
                     purchaseContinued={this.purchaseContinueHandler} />
             );
-            
+
             burger = (
                 <Auxiliary>
                     <Burger ingredients={this.state.ingredients} />
-                    <BuildControls 
-                        ingredientAdded={this.addIngredientHandler} 
-                        ingredientRemoved={this.removeIngredientHandler} 
-                        disabled={disabledInfo} 
-                        price={this.state.totalPrice} 
-                        purchasable={this.state.purchasable} 
+                    <BuildControls
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler}
+                        disabled={disabledInfo}
+                        price={this.state.totalPrice}
+                        purchasable={this.state.purchasable}
                         ordered={this.purchaseHandler} />
                 </Auxiliary>
             );
         }
 
-        // 3. When an order is processing, orderSummary displays a spinner 
+        // 3. When an order is processing, orderSummary displays a spinner
         if (this.state.loading) {
             orderSummary = <Spinner />
         }
