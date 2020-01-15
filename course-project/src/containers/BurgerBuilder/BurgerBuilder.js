@@ -68,29 +68,29 @@ class BurgerBuilder extends Component {
     }
 
     removeIngredientHandler = type => {
-         // Update ingredients
-         const oldCount = this.state.ingredients[type];
+        // Update ingredients
+        const oldCount = this.state.ingredients[type];
 
-         if (oldCount <= 0) {
-             return;
-         }
+        if (oldCount <= 0) {
+            return;
+        }
 
-         const updatedCount = oldCount - 1;
-         const updatedIngredients = {
-             ...this.state.ingredients
-         };
-         updatedIngredients[type] = updatedCount;
+        const updatedCount = oldCount - 1;
+        const updatedIngredients = {
+            ...this.state.ingredients
+        };
+        updatedIngredients[type] = updatedCount;
 
          // Update total price
-         const priceDeduction = INGREDIENT_PRICES[type];
-         const oldPrice = this.state.totalPrice;
-         const newPrice = oldPrice - priceDeduction;
+        const priceDeduction = INGREDIENT_PRICES[type];
+        const oldPrice = this.state.totalPrice;
+        const newPrice = oldPrice - priceDeduction;
 
-         this.setState({
-             ingredients: updatedIngredients,
-             totalPrice: newPrice
-         });
-         this.updatePurchaseState(updatedIngredients);
+        this.setState({
+            ingredients: updatedIngredients,
+            totalPrice: newPrice
+        });
+        this.updatePurchaseState(updatedIngredients);
     }
 
     purchaseHandler = () => {
@@ -102,36 +102,14 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        // alert('You continue!');
-
-        // this.setState({ loading: true });
-
-        // const order = {
-        //     ingredients: this.state.ingredients,
-        //     price: this.state.totalPrice,
-        //     customer: {
-        //         name: 'Hugo Dessomme',
-        //         address: {
-        //             street: 'Test Street',
-        //             zipCode: '43000',
-        //             country: 'France'
-        //         },
-        //         email: 'test@test.com'
-        //     },
-        //     deliveryMethod: 'fastest'
-        // };
-
-        // axios
-        //     .post('/orders.json', order)
-        //     .then(response => this.setState({ loading: false, purchasing: false }))
-        //     .catch(error => this.setState({ loading: false, purchasing: false }));
-
         const queryParams = [];
         for (let i in this.state.ingredients) {
             queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]))
         }
-        const queryString = queryParams.join('&');
+        
+        queryParams.push('price=' + this.state.totalPrice);
 
+        const queryString = queryParams.join('&');
         this.props.history.push({
             pathname: '/checkout',
             search: '?' + queryString
