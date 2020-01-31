@@ -3,18 +3,28 @@ import css from './Input.module.css';
 
 const input = props => {
     let inputElement = null;
+    const inputClasses = [css.InputElement];
+
+    if (props.invalid && props.shouldValidate && props.touched) {
+        inputClasses.push(css.Invalid);
+    }
+
+    let error = null;
+    if (props.invalid && props.touched) {
+        error = <p className={css.Error}>Please enter a valid value!</p>
+    }
 
     switch(props.tag) {
         case 'input':
             inputElement = <input
-                                className={css.InputElement}
+                                className={inputClasses.join(' ')}
                                 {...props.config}
                                 value={props.value}
                                 onChange={props.changed}  />
             break;
         case 'textarea':
             inputElement = <textarea
-                                className={css.InputElement}
+                                className={inputClasses.join(' ')}
                                 {...props.config}
                                 value={props.value}
                                 onChange={props.changed} />
@@ -22,7 +32,7 @@ const input = props => {
         case 'select':
             inputElement = (
                 <select
-                    className={css.InputElement}
+                    className={inputClasses.join(' ')}
                     value={props.value}
                     onChange={props.changed}>
                         {props.config.options.map(option => (
@@ -35,7 +45,7 @@ const input = props => {
             break;
         default:
             inputElement = <input
-                                className={css.InputElement}
+                                className={inputClasses.join(' ')}
                                 {...props.config}
                                 value={props.value}
                                 onChange={props.changed} />
@@ -44,6 +54,7 @@ const input = props => {
         <div className={css.Input}>
             <label className={css.Label}>{props.label}</label>
             {inputElement}
+            {error}
         </div>
     );
 }
