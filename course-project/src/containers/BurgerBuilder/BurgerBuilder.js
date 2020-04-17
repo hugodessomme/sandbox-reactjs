@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actionTypes from '../../store/actions';
 import axios from '../../axios-orders';
+import * as actions from '../../store/actions/index';
 import Auxiliary from '../../hoc/Auxiliary/Auxiliary';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import Burger from '../../components/Burger/Burger';
@@ -13,20 +13,11 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 class BurgerBuilder extends Component {
     state = {
         purchasable: false,
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
     }
 
     componentDidMount() {
-        // axios
-        //     .get('/ingredients.json')
-        //     .then(response => {
-        //         this.setState({ ingredients: response.data });
-        //     })
-        //     .catch(error => {
-        //         this.setState({ error: true });
-        //     });
+        this.props.onInitIngredients();
     }
 
     updatePurchaseState = ingredients => {
@@ -48,7 +39,8 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-       this.props.history.push('/checkout');
+        this.props.onInitPurchase();
+        this.props.history.push('/checkout');
     }
 
     render() {
@@ -62,7 +54,7 @@ class BurgerBuilder extends Component {
         // 1. Before fetching data, orderSummary is not defined
         // 1. Before fetching data, burger displays a spinner
         let orderSummary = null;
-        let burger = this.state.error ? <p>Ingredients can't be loaded!</p> : <Spinner />;
+        let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner />;
 
         // 2. When ingredients are fetched, we define orderSummary
         // 2. When ingredients are fetched, we define burger
@@ -90,9 +82,9 @@ class BurgerBuilder extends Component {
         }
 
         // 3. When an order is processing, orderSummary displays a spinner
-        if (this.state.loading) {
-            orderSummary = <Spinner />
-        }
+        // if (this.state.loading) {
+        //     orderSummary = <Spinner />
+        // }
 
         return (
             <Auxiliary>
@@ -107,15 +99,18 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.ingredients,
-        totalPrice: state.totalPrice
+        ingredients: state.burgerBuilder.ingredients,
+        totalPrice: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     }
 };
 
 const mapDispatchToProps = dispatch =>{
     return {
-        onIngredientAdded: (ingredient) => dispatch({ type: actionTypes.ADD_INGREDIENT, ingredient }), 
-        onIngredientRemoved: (ingredient) => dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredient }) 
+        onInitIngredients: () => dispatch(actions.initIngredients()),
+        onIngredientAdded: (ingredient) => dispatch(actions.addIngredient(ingredient)), 
+        onIngredientRemoved: (ingredient) => dispatch(actions.removeIngredient(ingredient)),
+        onInitPurchase: () => dispatch(actions.purchaseInit()) 
     };
 }
 
